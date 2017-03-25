@@ -20,8 +20,10 @@ describe('Constructor tests', function(){
 
     it ('incorrect initializers throw', function() {
         expect(function(){Timecode(1,-1)}).to.throwException();
+        expect(function(){Timecode(1,66)}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
+        expect(function(){Timecode({w:3});}).to.throwException();
     });
 
     it ('string initializers work', function(){
@@ -47,7 +49,11 @@ describe('Constructor tests', function(){
 
     });
 
-    it ('drop-frame and framerate defaults', function() {
+    it ('initialization defaults', function() {
+        var t = Timecode();
+        expect(t.frameCount).to.be(0);
+        expect(t.frameRate).to.be(29.97);
+        expect(t.dropFrame).to.be(true);
         expect(Timecode(1).dropFrame).to.be(true);
         expect(Timecode(1).frameRate).to.be(29.97);
         expect(Timecode(1,29.97).dropFrame).to.be(true);
@@ -101,11 +107,19 @@ describe('Timecode arithmetic', function(){
         expect(t).to.be(150607); 
         expect(t).to.be.a('number'); // t is not a timecode anymore!
     });
-    it ('Timecode().add()', function() {
+    it ('Timecode().add() and .subtract()', function() {
         var t = Timecode('01:23:45;06');
         expect(t.add(60).toString()).to.be('01:23:47;06')
         expect(function(){Timecode('00:00:10;00').add(-301)}).to.throwError(); // below zero
         expect(Timecode('23:59:40;00').add(Timecode('00:00:21;00')).toString()).to.be('00:00:01;00'); // wraparound
+
+        var t = Timecode('01:23:45;06');
+        expect(t.subtract(60).toString()).to.be('01:23:43;06')
+        expect(function(){Timecode('00:00:10;00').subtract(301)}).to.throwError(); // below zero
+
+        expect(Timecode('01:23:45;06').add('01:23:13;01').toString()).to.be('02:46:58;07');
+
+
     });
 });
 
@@ -117,6 +131,10 @@ describe('Date() operations', function(){
     it ('Timecode to Date()', function(){
         var t = new Timecode( new Date(0,0,0,1,2,13,200), 29.97, true );
         expect( t.frameCount ).to.be(111996);
-        expect( Timecode('00:01:01;10').toDate()).to.be(Date(0,0,0,0,1,1,333));
+        var d = Timecode('01:23:45;10').toDate();
+        expect( d.getHours()).to.be(1);
+        expect( d.getMinutes()).to.be(23);
+        expect( d.getSeconds()).to.be(45);
+        expect( d.getMilliseconds()).to.be(358);
     });
 });

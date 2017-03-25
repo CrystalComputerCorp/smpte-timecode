@@ -78,7 +78,8 @@
     Timecode.prototype._frameCountToTimeCode = function() {
         // adjust for dropFrame
         if (this.dropFrame) {
-            var df = this.frameRate==29.97 ? 2 : 4; // 59.94 is 4 frames
+            // var df = this.frameRate==29.97 ? 2 : 4; // 59.94 is 4 frames, we'll support it some day
+            var df = 2;
             var d = Math.floor(this.frameCount / 17982);
             var m = this.frameCount % 17982;
             if (m<2) m=m+2;
@@ -133,33 +134,45 @@
     /**
      * Adds t to timecode, in-place (i.e. the object itself changes)
      * @param {number|string|Date|Timecode} t How much to add
+     * @param {boolean} [negative=false] Whether we are adding or subtracting
      * @returns Timecode
      */
-    Timecode.prototype.add = function(t) {
+    Timecode.prototype.add = function(t,negative) {
         if (typeof t == 'number') {
-            if (this.frameCount+Math.floor(t)<0) throw new Error("Negative timecodes not supported");
-            this.frameCount += Math.floor(t);
+            var newFrameCount = this.frameCount + Math.floor(t) * (negative?-1:1);
+            if (newFrameCount<0) throw new Error("Negative timecodes not supported");
+            this.frameCount = newFrameCount;
         } 
         else {
             if (!(t instanceof Timecode)) t = new Timecode(t);
-            this.frameCount += t.frameCount;
-            this.frameCount = this.frameCount % (Math.floor(this.frameRate*86400)); // wraparound 24h
+            return this.add(t.frameCount,negative);
         }
+        this.frameCount = this.frameCount % (Math.floor(this.frameRate*86400)); // wraparound 24h
         this._frameCountToTimeCode();
         return this;
     };
 
+
+    Timecode.prototype.subtract = function(t) {
+        return this.add(t,true);
+    }
+
     /**
      * Converts timecode to a Date() object
+     * @returns {Date}
      */
     Timecode.prototype.toDate = function() {
         var ms = this.frameCount/this.frameRate*1000
-        return new Date( 0, 0, 0, 1,2,3,4 );
-
-        // TODO
+        var midnight = new Date();
+        midnight.setHours(0);
+        midnight.setMinutes(0);
+        midnight.setSeconds(0);
+        midnight.setMilliseconds(0);
+        return new Date( midnight.valueOf() + ms );
     };
 
     // Export it for Node or attach to root for in-browser
+    /* istanbul ignore else */
     if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
         module.exports = Timecode;
     } else if (root) {
