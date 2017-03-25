@@ -1,10 +1,12 @@
 # smpte-timecode
+[![NPM](https://nodei.co/npm/smpte-timecode.png?compact=true)](https://nodei.co/npm/smpte-timecode/)  
+dede
 
-`smpte-timecode is a JavaScript library for operations with [SMPTE timecodes](https://en.wikipedia.org/wiki/SMPTE_timecode).
+`smpte-timecode` is a JavaScript library for operations with [SMPTE timecodes](https://en.wikipedia.org/wiki/SMPTE_timecode).
 
 ## Features
 
-- usable browser or Node environment;
+- usable in browser and Node environments;
 - supports drop-frame and non-drop-frame codes;
 - instantiate timecodes from frame count, string time code or JavaScript Date() objects;
 - timecode arithmetics: adding frame counts and other timecodes;
@@ -14,7 +16,7 @@
 
 ```javascript
 var t = Timecode('00:15:10;03');
-t.add('00:02:30;00;');
+t.add('00:02:30;00');
 console.log(t.frameCount);
 t.subtract(100); //frames
 console.log(t.toString());
@@ -35,13 +37,12 @@ var wallClock = new Timecode(new Date());
         frame count. Strings are expected as `"HH:MM:SS:FF"` (non-drop-frame) or
         `"HH:MM:SS;FF"` (drop-frame). If Date() is passed, it is converted to the
         timecode a master clock would have with a given framerate, month date and 
-        year discarded.
-    </dd>
+        year discarded.</dd>
     <dt>frameRate</dt>
     <dd>(optional) A number, one of 24, 25, 29.97, 30, 50, 60 is expected. 
         29,97 is assumed if the parameter is omitted.
     </dd>
-    <dt>dropFrame<dt>
+    <dt>dropFrame</dt>
     <dd>(optional) Boolean, if omitted, drop-frame mode is determined based on
         the ":" or ";" characters separating the frames in the timecode parameter.
         If timecode parameter is non-string, drop-frame assumed for 29.97 fps,
@@ -52,7 +53,8 @@ var wallClock = new Timecode(new Date());
 Note: a direct call to `Timecode()` returns a `Timecode` object too, so both direct
 calls and instantiating with `new` return the same result:
 ```javascript
-console.log((new Timecode('00:15:00;00')).toString()); // is the same as
+console.log((new Timecode('00:15:00;00')).toString()); 
+// is the same as
 console.log(Timecode('00:15:00;00').toString());
 ```
 
