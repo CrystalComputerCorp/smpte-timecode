@@ -4,7 +4,7 @@
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec && codecov --file=coverage/lcov.info --disable=gcov"
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec && codecov"
   },
   "repository": {
     "type": "git",
