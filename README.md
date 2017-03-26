@@ -1,6 +1,6 @@
 # smpte-timecode
-[![NPM](https://nodei.co/npm/smpte-timecode.png?mini=true)](https://nodei.co/npm/smpte-timecode/)  
-[![Travis](https://img.shields.io/travis/CrystalComputerCorp/smpte-timecode.svg)](https://travis-ci.org/CrystalComputerCorp/smpte-timecode) [![Codecov](https://img.shields.io/codecov/c/github/CrystalComputerCorp/smpte-timecode.svg)](https://codecov.io/gh/CrystalComputerCorp/smpte-timecode) [![npm](https://img.shields.io/npm/dt/smpte-timecode.svg)](https://www.npmjs.com/package/smpte-timecode)
+[![Travis](https://img.shields.io/travis/CrystalComputerCorp/smpte-timecode.svg)](https://travis-ci.org/CrystalComputerCorp/smpte-timecode) [![Codecov](https://img.shields.io/codecov/c/github/CrystalComputerCorp/smpte-timecode.svg)](https://codecov.io/gh/CrystalComputerCorp/smpte-timecode) [![Coveralls](https://img.shields.io/coveralls/CrystalComputerCorp/smpte-timecode.svg)](https://coveralls.io/github/CrystalComputerCorp/smpte-timecode?branch=master)   
+[![npm](https://img.shields.io/npm/v/smpte-timecode.svg)](http://https://www.npmjs.com/package/smpte-timecode) [![npm](https://img.shields.io/npm/dt/smpte-timecode.svg)](https://www.npmjs.com/package/smpte-timecode) [![npm](https://img.shields.io/npm/l/smpte-timecode.svg)]()
 
 `smpte-timecode` is a JavaScript library for operations with [SMPTE timecodes](https://en.wikipedia.org/wiki/SMPTE_timecode).
 
