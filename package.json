@@ -4,7 +4,7 @@
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha"
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec && codecov --file=coverage/lcov.info --disable=gcov"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/CrystalComputerCorp/smpte-timecode#readme",
   "devDependencies": {
+    "codecov": "^2.1.0",
+    "codecov.io": "^0.1.6",
     "expect.js": "^0.3.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
