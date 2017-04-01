@@ -15,6 +15,7 @@
 ## Usage
 
 ```javascript
+const Timecode = require('smpte-timecode')
 var t = Timecode('00:15:10;03');
 t.add('00:02:30;00');
 console.log(t.frameCount);
