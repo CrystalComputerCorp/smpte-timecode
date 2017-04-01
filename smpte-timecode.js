@@ -76,6 +76,7 @@
      * @private
      */
     Timecode.prototype._frameCountToTimeCode = function() {
+        var fc = this.frameCount;
         // adjust for dropFrame
         if (this.dropFrame) {
             // var df = this.frameRate==29.97 ? 2 : 4; // 59.94 is 4 frames, we'll support it some day
@@ -83,13 +84,13 @@
             var d = Math.floor(this.frameCount / 17982);
             var m = this.frameCount % 17982;
             if (m<2) m=m+2;
-            this.frameCount = this.frameCount + 9*df*d + df*(Math.floor((m-2)/1798));
+            fc = this.frameCount + 9*df*d + df*(Math.floor((m-2)/1798));
         }
         var fps = Math.round(this.frameRate);
-        this.frames = this.frameCount % fps;
-        this.seconds = Math.floor(this.frameCount/fps) % 60;
-        this.minutes = Math.floor(this.frameCount/(fps*60)) % 60;
-        this.hours = Math.floor(this.frameCount/(fps*3600)) % 24;
+        this.frames = fc % fps;
+        this.seconds = Math.floor(fc/fps) % 60;
+        this.minutes = Math.floor(fc/(fps*60)) % 60;
+        this.hours = Math.floor(fc/(fps*3600)) % 24;
     };
 
     /**

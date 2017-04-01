@@ -119,18 +119,23 @@ describe('Timecode arithmetic', function(){
 
         expect(Timecode('01:23:45;06').add('01:23:13;01').toString()).to.be('02:46:58;07');
 
-
+        // Covering the error with _frameCountToTimeCode() altering this.frameCount
+        var t = Timecode('00:01:15;00');
+        var t2 = Timecode('00:01:15;00');
+        t2.add(0);
+        expect(t.frameCount).to.be(t2.frameCount);
+        t2.add(12345);
+        expect(t.frameCount).to.be(t2.frameCount-12345);
     });
 });
 
 describe('Date() operations', function(){
     it ('Date() initializers work', function(){
         var t = new Timecode( new Date(0,0,0,1,2,13,200), 29.97, true );
-        expect( t.frameCount ).to.be(111996);
+        expect( t.frameCount ).to.be(111884);
+        expect( t.toString()).to.be('01:02:13;06');
     });
     it ('Timecode to Date()', function(){
-        var t = new Timecode( new Date(0,0,0,1,2,13,200), 29.97, true );
-        expect( t.frameCount ).to.be(111996);
         var d = Timecode('01:23:45;10').toDate();
         expect( d.getHours()).to.be(1);
         expect( d.getMinutes()).to.be(23);
