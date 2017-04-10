@@ -20,12 +20,12 @@
         else if (typeof frameRate == 'number' && frameRate>0) this.frameRate = frameRate;
         else throw new Error('Number expected as framerate');
         if (this.frameRate!=24 && this.frameRate!=25 && this.frameRate!=29.97 && this.frameRate!=30 &&
-            this.frameRate!=50 && this.frameRate!=60
+            this.frameRate!=50 && this.frameRate!=59.94 && this.frameRate!=60
         ) throw new Error('Unsupported framerate');
         
         // If we are passed dropFrame, we need to use it
         if (typeof dropFrame === 'boolean') this.dropFrame = dropFrame;
-        else this.dropFrame = (this.frameRate==29.97); // by default, assume DF for 29.97, NDF otherwise
+        else this.dropFrame = (this.frameRate==29.97 || this.frameRate==59.94); // by default, assume DF for 29.97 and 59.94, NDF otherwise
 
         // Now either get the frame count, string or datetime        
         if (typeof timeCode == 'number') {
@@ -45,7 +45,7 @@
             // make sure the numbers make sense
             if ( this.hours>23 || this.minutes>59 || this.seconds>59 || 
                  this.frames>=this.frameRate ||
-                 (this.dropFrame && this.frames<2 && this.seconds==0 && this.minutes%10 )
+                 (this.dropFrame && this.seconds==0 && this.minutes%10 && this.frames<2*(this.frameRate/29.97) )
             ) throw new Error("Invalid timecode")
         }
         else if (typeof timeCode == 'object' && timeCode instanceof Date) {
@@ -59,8 +59,10 @@
             throw new Error('Timecode() constructor expects a number, timecode string, or Date()');
         }
 
-        // Make sure dropFrame is only for 29.97
-        if (this.dropFrame && this.frameRate!=29.97) throw new Error('Drop frame is only supported for 29.97fps');
+        // Make sure dropFrame is only for 29.97 & 59.94
+        if (this.dropFrame && this.frameRate!=29.97 && this.frameRate!=59.94) {
+            throw new Error('Drop frame is only supported for 29.97 and 59.94 fps');
+        }
 
         // Now, if we have frameCount we need to calculate hours minutes seconds frames, vice versa
         if (typeof(this.frameCount)!=='number') {
@@ -79,12 +81,11 @@
         var fc = this.frameCount;
         // adjust for dropFrame
         if (this.dropFrame) {
-            // var df = this.frameRate==29.97 ? 2 : 4; // 59.94 is 4 frames, we'll support it some day
-            var df = 2;
-            var d = Math.floor(this.frameCount / 17982);
-            var m = this.frameCount % 17982;
-            if (m<2) m=m+2;
-            fc = this.frameCount + 9*df*d + df*(Math.floor((m-2)/1798));
+            var df = this.frameRate==29.97 ? 2 : 4; // 59.94 skips 4 frames
+            var d = Math.floor(this.frameCount / (17982*df/2));
+            var m = this.frameCount % (17982*df/2);
+            if (m<df) m=m+df;
+            fc = this.frameCount + 9*df*d + df*(Math.floor((m-df)/(1798*df/2)));
         }
         var fps = Math.round(this.frameRate);
         this.frames = fc % fps;
@@ -101,7 +102,8 @@
         this.frameCount = (this.hours*3600 + this.minutes*60 + this.seconds) * Math.round(this.frameRate) + this.frames;
         if (this.dropFrame) {
             var totalMinutes = this.hours*60 + this.minutes;
-            this.frameCount = this.frameCount - 2 * (totalMinutes - Math.floor(totalMinutes/10));
+            var df = this.frameRate == 29.97 ? 2 : 4;
+            this.frameCount = this.frameCount - df * (totalMinutes - Math.floor(totalMinutes/10));
         }
     };
 
@@ -109,7 +111,18 @@
      * Convert Timecode to String
      * @returns {string}
      */
-    Timecode.prototype.toString = function TimeCodeToString() {
+    Timecode.prototype.toString = function TimeCodeToString(format) {
+        var frames = this.frames;
+        var field = '';
+        if (typeof format == 'string') {
+            if (format == 'field') {
+                if (this.frameRate<=30) field = '.0';
+                else {
+                    frames = Math.floor(frames/2);
+                    field = '.'.concat((this.frameCount%2).toString());
+                };
+            };
+        };
         return "".concat(
             this.hours<10 ? '0' : '',
             this.hours.toString(),
@@ -120,8 +133,9 @@
             this.seconds<10 ? '0' : '',
             this.seconds.toString(),
             this.dropFrame ? ';' : ':',
-            this.frames<10 ? '0' : '',
-            this.frames.toString()
+            frames<10 ? '0' : '',
+            frames.toString(),
+            field
         );
     };
 

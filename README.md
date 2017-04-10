@@ -29,22 +29,22 @@ Timecode = function (timecode, frameRate, dropFrame) {...};
 ```
 
 - `timecode`: number, string or Date  
-Numbers are interpreted as frame count.  
-Strings are expected as `"HH:MM:SS:FF"` (non-drop-frame) or
-`"HH:MM:SS;FF"` (drop-frame).  
-If Date() is passed, it is converted to the timecode a master 
+  - Numbers are interpreted as frame count.  
+  - Strings are expected as `"HH:MM:SS:FF"` (non-drop-frame) or
+`"HH:MM:SS;FF"` (drop-frame). The constructor will throw if the string contains invalid timecode, for example frame count above framerate or 0 frames in a drop-frame second.  
+  - If `Date()` is passed, it is converted to the timecode a master 
 clock would have with a given framerate. Month, date and
 year discarded.
 
 - `frameRate`: number, optional  
-one of 24, 25, 29.97, 30, 50, 60 is expected. 
+one of 24, 25, 29.97, 30, 50, 59.94, or 60 is expected. 
 29.97 is assumed if the parameter is omitted.
 
 - `dropFrame`: boolean, optional  
 whether the timecode is using drop-frame or non-drop-frame mode.
 If omitted, and `timecode` is a string, the drop-frame mode is determined based on
-the ":" or ";" characters separating the frames in the `timecode` parameter.  
-If `timecode` parameter is not a string, drop-frame assumed for 29.97 framerate, non-drop-frame for all other framerates.
+the ":" or ";" characters separating the frames in the `timecode` parameter.
+If `timecode` parameter is not a string, drop-frame assumed for 29.97 and 59.94 framerates, non-drop-frame for all others.
 
 Examples:
 ```javascript
@@ -79,13 +79,14 @@ The `Timecode` object also provides the following member functions:
 - `subtract(x)`: Timecode, subtracts `x` from timecode, `x` can be a number, `Date` 
     or `Timecode`
 - `toString()`: string, returns the timecode in "HH:MM:SS:FF" or "HH:MM:SS;FF" format
+- `toString('field')`: string, returns the timecode in VITC format, where timecodes above 30fps are represented as frame.field, i.e. HH:MM:SS:FF.f
 - `toDate()`: date, returns a `Date` object using today's date and timecode as wall clock
 - `valueOf()`: number, returns `this.frameCount`
 
 For more usage examples, see the unit tests.
 
 ## Running Tests
-To run tests, make sure you install `expect.js`, `mocha` and `istanbul` NPMs **locally**.
+To run tests, make sure you install `expect.js`, `mocha`, `codecov` and `istanbul` NPMs **locally**.
 
     npm install expect.js mocha istanbul codecov
 
@@ -95,6 +96,14 @@ The tests can be run in Node using:
 
 To run the tests in a browser environment, open the `test/smpte-timecode-test.html` file
 in a browser.
+
+## Update History
+
+- 1.2.0
+  - Added support for 59.94 fps drop-frame expressed without fields - i.e. 00:00:00;59 is 1 frame short of a second;
+  - Added `.ToString('field')` output in HH:MM:SS;FF.f format;
+- 1.1.0  
+  - Fixed the problem with Timecode.add(0) subtracting the frameCount for drop frame timecodes
 
 ## Credits
 - [https://www.npmjs.com/package/timecode](https://www.npmjs.com/package/timecode) 
