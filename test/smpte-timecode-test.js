@@ -113,6 +113,9 @@ describe('String conversions', function(){
         expect(Timecode('12:34:56;57',59.94).toString('field')).to.be('12:34:56;28.1');
         expect(Timecode('01:02:03;04',59.94).toString('field')).to.be('01:02:03;02.0');
     });
+    it ('toString(\'unknown-format\')',function(){
+        expect(function() {Timecode('12:34:56;23').toString('unknown-format')}).to.throwException();
+    });
 });
 
 describe('Timecode arithmetic', function(){

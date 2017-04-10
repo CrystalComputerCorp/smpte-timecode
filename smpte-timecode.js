@@ -121,7 +121,8 @@
                     frames = Math.floor(frames/2);
                     field = '.'.concat((this.frameCount%2).toString());
                 };
-            };
+            }
+            else throw new Error('Unsupported string format');
         };
         return "".concat(
             this.hours<10 ? '0' : '',
