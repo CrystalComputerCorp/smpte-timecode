@@ -4,7 +4,7 @@
     
     /**
      * Timecode object constructor
-     * @param {number|String|Date} timeCode Frame count as number, "HH:MM:SS(:|;|.)FF", or Date()
+     * @param {number|String|Date|Object} timeCode Frame count as number, "HH:MM:SS(:|;|.)FF", Date(), or object.
      * @param {number} [frameRate=29.97] Frame rate
      * @param {boolean} [dropFrame=true] Whether the timecode is drop-frame or not
      * @constructor
@@ -50,7 +50,20 @@
         }
         else if (typeof timeCode == 'object' && timeCode instanceof Date) {
             var midnight = new Date( timeCode.getFullYear(), timeCode.getMonth(), timeCode.getDate(),0,0,0 );
-    		this.frameCount = Math.floor(((timeCode-midnight)/1000)*this.frameRate);
+    		   this.frameCount = Math.floor(((timeCode-midnight)/1000)*this.frameRate);
+        }
+        else if (typeof timeCode === 'object' && timeCode.hours) {
+            this.hours = timeCode.hours;
+            this.minutes = timeCode.minutes;
+            this.seconds = timeCode.seconds;
+            this.frames = timeCode.frames;
+
+            // make sure the numbers make sense
+            if ( this.hours>23 || this.minutes>59 || this.seconds>59 || 
+                 this.frames>=this.frameRate ||
+                 (this.dropFrame && this.seconds==0 && this.minutes%10 && this.frames<2*(this.frameRate/29.97) )
+            ) throw new Error("Invalid timecode: " + JSON.stringify(timeCode))
+
         }
         else if (typeof timeCode == 'undefined') {
             this.frameCount = 0;
