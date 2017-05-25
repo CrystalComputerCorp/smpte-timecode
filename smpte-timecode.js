@@ -52,7 +52,7 @@
             var midnight = new Date( timeCode.getFullYear(), timeCode.getMonth(), timeCode.getDate(),0,0,0 );
     		   this.frameCount = Math.floor(((timeCode-midnight)/1000)*this.frameRate);
         }
-        else if (typeof timeCode === 'object' && timeCode.hours) {
+        else if (typeof timeCode === 'object' && timeCode.hours >= 0) {
             this.hours = timeCode.hours;
             this.minutes = timeCode.minutes;
             this.seconds = timeCode.seconds;
