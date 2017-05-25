@@ -164,17 +164,26 @@
      * Adds t to timecode, in-place (i.e. the object itself changes)
      * @param {number|string|Date|Timecode} t How much to add
      * @param {boolean} [negative=false] Whether we are adding or subtracting
+     * @param {Number} [rollOverMaxHours] allow rollovers
      * @returns Timecode
      */
-    Timecode.prototype.add = function(t,negative) {
-        if (typeof t == 'number') {
+    Timecode.prototype.add = function(t,negative,rollOverMaxHours) {
+        if (typeof t === 'number') {
             var newFrameCount = this.frameCount + Math.floor(t) * (negative?-1:1);
-            if (newFrameCount<0) throw new Error("Negative timecodes not supported");
+            if (newFrameCount<0 && rollOverMaxHours > 0) {
+               newFrameCount = (Math.floor(this.frameRate*86400)) + newFrameCount;
+               if (((newFrameCount / this.frameRate) / 3600) > rollOverMaxHours) {
+                   throw new Error('Rollover arithmetic exceeds max permitted');
+               }
+            }
+           if (newFrameCount<0) {
+              throw new Error("Negative timecodes not supported");
+           }
             this.frameCount = newFrameCount;
         } 
         else {
             if (!(t instanceof Timecode)) t = new Timecode(t);
-            return this.add(t.frameCount,negative);
+            return this.add(t.frameCount,negative,rollOverMaxHours);
         }
         this.frameCount = this.frameCount % (Math.floor(this.frameRate*86400)); // wraparound 24h
         this._frameCountToTimeCode();
@@ -182,9 +191,9 @@
     };
 
 
-    Timecode.prototype.subtract = function(t) {
-        return this.add(t,true);
-    }
+    Timecode.prototype.subtract = function(t, rollOverMaxHours) {
+        return this.add(t,true,rollOverMaxHours);
+    };
 
     /**
      * Converts timecode to a Date() object
