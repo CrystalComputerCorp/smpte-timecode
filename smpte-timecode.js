@@ -19,9 +19,6 @@
         if (typeof frameRate == 'undefined') this.frameRate = 29.97;
         else if (typeof frameRate == 'number' && frameRate>0) this.frameRate = frameRate;
         else throw new Error('Number expected as framerate');
-        if (this.frameRate!=24 && this.frameRate!=25 && this.frameRate!=29.97 && this.frameRate!=30 &&
-            this.frameRate!=50 && this.frameRate!=59.94 && this.frameRate!=60
-        ) throw new Error('Unsupported framerate');
         
         // If we are passed dropFrame, we need to use it
         if (typeof dropFrame === 'boolean') this.dropFrame = dropFrame;
