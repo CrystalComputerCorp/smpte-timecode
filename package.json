@@ -1,6 +1,6 @@
 {
-  "name": "smpte-timecode",
-  "version": "0.1.1-oz",
+  "name": "@ownzones/smpte-timecode",
+  "version": "0.1.2-oz",
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CrystalComputerCorp/smpte-timecode.git"
+    "url": "git+https://github.com/OwnZones/smpte-timecode.git"
   },
   "keywords": [
     "SMPTE",
@@ -23,14 +23,15 @@
   "author": "Dimitri Tarassenko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CrystalComputerCorp/smpte-timecode/issues"
+    "url": "https://github.com/OwnZones/smpte-timecode/issues"
   },
-  "homepage": "https://github.com/CrystalComputerCorp/smpte-timecode#readme",
+  "homepage": "https://github.com/OwnZones/smpte-timecode#readme",
   "devDependencies": {
     "codecov": "^2.1.0",
     "coveralls": "^2.12.0",
     "expect.js": "^0.3.1",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "publish": "^0.6.0"
   }
 }
