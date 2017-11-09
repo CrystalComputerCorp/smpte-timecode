@@ -99,6 +99,8 @@ in a browser.
 
 ## Update History
 
+- 1.2.1
+  - Added support for 23.976 fps framerate (@funkelodeon)
 - 1.2.0
   - Added support for 59.94 fps drop-frame expressed without fields - i.e. 00:00:00;59 is 1 frame short of a second;
   - Added `.ToString('field')` output in HH:MM:SS;FF.f format;
