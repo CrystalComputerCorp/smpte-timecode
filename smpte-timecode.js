@@ -50,7 +50,7 @@
         }
         else if (typeof timeCode == 'object' && timeCode instanceof Date) {
             var midnight = new Date( timeCode.getFullYear(), timeCode.getMonth(), timeCode.getDate(),0,0,0 );
-    		this.frameCount = Math.floor(((timeCode-midnight)*this.frameRate))/1000;
+    		this.frameCount = Math.floor(((timeCode-midnight)*this.frameRate)/1000);
         }
         else if (typeof timeCode == 'undefined') {
             this.frameCount = 0;
