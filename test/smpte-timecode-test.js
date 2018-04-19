@@ -157,6 +157,10 @@ describe('Date() operations', function(){
         var t = new Timecode( new Date(0,0,0,1,2,13,200), 29.97, true );
         expect( t.frameCount ).to.be(111884);
         expect( t.toString()).to.be('01:02:13;06');
+        
+        var t2 = new Timecode( new Date(0,0,0,10,40,15,520), 25, false );
+        expect( t2.frameCount ).to.be(960388);
+        expect( t2.toString()).to.be('10:40:15:13');
     });
     it ('Timecode to Date()', function(){
         var d = Timecode('01:23:45;10').toDate();
