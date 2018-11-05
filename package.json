@@ -1,6 +1,6 @@
 {
   "name": "smpte-timecode",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {
@@ -27,10 +27,11 @@
   },
   "homepage": "https://github.com/CrystalComputerCorp/smpte-timecode#readme",
   "devDependencies": {
-    "codecov": "^2.1.0",
-    "coveralls": "^2.12.0",
+    "codecov": "^3.1.0",
+    "coveralls": "^3.0.2",
     "expect.js": "^0.3.1",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0"
+    "mocha": "^5.2.0",
+    "sinon": "^7.1.1"
   }
 }

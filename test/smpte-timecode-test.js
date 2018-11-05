@@ -1,9 +1,10 @@
+var sinon = require('sinon');
 
 // If we are running under Node, we need to add expect and load our module
 if (typeof module !== 'undefined' && module.exports) {
     global.expect = require('expect.js');
     global.Timecode = require('../smpte-timecode.js');
-};
+}
 
 describe('Constructor tests', function(){
 
@@ -34,7 +35,7 @@ describe('Constructor tests', function(){
         expect(t.frames).to.be(12);
         expect(t.dropFrame).to.be(true);
         expect(t.frameRate).to.be(29.97);
-        var t = new Timecode('12:33:44:12');
+        t = new Timecode('12:33:44:12');
         expect(t.hours).to.be(12);
         expect(t.minutes).to.be(33);
         expect(t.seconds).to.be(44);
@@ -136,19 +137,25 @@ describe('Timecode arithmetic', function(){
         expect(function(){Timecode('00:00:10;00').add(-301)}).to.throwError(); // below zero
         expect(Timecode('23:59:40;00').add(Timecode('00:00:21;00')).toString()).to.be('00:00:01;00'); // wraparound
 
-        var t = Timecode('01:23:45;06');
+        t = Timecode('01:23:45;06');
         expect(t.subtract(60).toString()).to.be('01:23:43;06')
         expect(function(){Timecode('00:00:10;00').subtract(301)}).to.throwError(); // below zero
 
         expect(Timecode('01:23:45;06').add('01:23:13;01').toString()).to.be('02:46:58;07');
 
         // Covering the error with _frameCountToTimeCode() altering this.frameCount
-        var t = Timecode('00:01:15;00');
+        t = Timecode('00:01:15;00');
         var t2 = Timecode('00:01:15;00');
         t2.add(0);
         expect(t.frameCount).to.be(t2.frameCount);
         t2.add(12345);
         expect(t.frameCount).to.be(t2.frameCount-12345);
+    });
+    it('handles rollover to new day when permitted', function() {
+       expect(function() { new Timecode().subtract(new Timecode('23:00:01;00')); }).to.throwError();
+       expect(new Timecode().subtract(new Timecode('23:30:00;00'), 1).toString()).to.be('00:30:00;00');
+       expect(function() { new Timecode().subtract(new Timecode('22:30:00;00'), 1); }).to.throwError();
+       expect(new Timecode('01:00:00;00').subtract(new Timecode('23:30:00;00'), 2).toString()).to.be('01:30:00;00');
     });
 });
 
@@ -169,4 +176,53 @@ describe('Date() operations', function(){
         expect( d.getSeconds()).to.be(45);
         expect( d.getMilliseconds()).to.be(358);
     });
+});
+
+describe('DST handling', function() {
+   var clock;
+
+   function clearDate(d) {
+      d.setYear(0);
+      d.setMonth(0);
+      d.setDate(1);
+   }
+
+   function checkDst(d) {
+      // we need to fake out 'new Date()', since this issue only happens day of.
+      clock = sinon.useFakeTimers(d);
+
+      var t = new Timecode(d, 29.97, true);
+      var o = t.toDate();
+      // console.log(d.toString(), '->', o.toString());
+      clearDate(d);
+      clearDate(o);
+      expect(o.toString()).to.be(d.toString());
+   }
+
+   afterEach(function() {
+      clock.restore();
+   });
+
+   it ('handles DST start 1am', function() {
+      checkDst(new Date(2018,2,11,1,0,0,200));
+      checkDst(new Date(2018,2,11,1,59,59,200));
+   });
+
+   it ('handles DST start 2am', function() {
+      checkDst(new Date(2018,2,11,2,0,0,200));
+      checkDst(new Date(2018,2,11,2,59,59,200));
+      checkDst(new Date(2018,2,11,3,0,0,200));
+   });
+
+   it ('handles DST end 1am', function() {
+      checkDst(new Date(2018,10,4,1,0,0,200));
+      checkDst(new Date(2018,10,4,1,59,59,200));
+   });
+
+   it ('handles DST end 2am', function() {
+      checkDst(new Date(2018,10,4,2,0,0,200));
+      checkDst(new Date(2018,10,4,2,59,59,200));
+      checkDst(new Date(2018,10,4,3,0,0,200));
+   });
+
 });

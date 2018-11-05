@@ -4,7 +4,7 @@
     
     /**
      * Timecode object constructor
-     * @param {number|String|Date} timeCode Frame count as number, "HH:MM:SS(:|;|.)FF", or Date()
+     * @param {number|String|Date|Object} timeCode Frame count as number, "HH:MM:SS(:|;|.)FF", Date(), or object.
      * @param {number} [frameRate=29.97] Frame rate
      * @param {boolean} [dropFrame=true] Whether the timecode is drop-frame or not
      * @constructor
@@ -50,7 +50,24 @@
         }
         else if (typeof timeCode == 'object' && timeCode instanceof Date) {
             var midnight = new Date( timeCode.getFullYear(), timeCode.getMonth(), timeCode.getDate(),0,0,0 );
-    		this.frameCount = Math.floor(((timeCode-midnight)*this.frameRate)/1000);
+            var midnight_tz = midnight.getTimezoneOffset() * 60 * 1000;
+            var timecode_tz = timeCode.getTimezoneOffset() * 60 * 1000;
+            this.frameCount = Math.floor(((timeCode-midnight + (midnight_tz - timecode_tz))*this.frameRate)/1000);
+        }
+        else if (typeof timeCode === 'object' && timeCode.hours >= 0) {
+            this.hours = timeCode.hours;
+            this.minutes = timeCode.minutes;
+            this.seconds = timeCode.seconds;
+            this.frames = timeCode.frames;
+
+            // make sure the numbers make sense
+            if ( this.hours>23 || this.minutes>59 || this.seconds>59 || 
+                 this.frames>=this.frameRate ||
+                 (this.dropFrame && this.seconds==0 && this.minutes%10 && this.frames<2*(this.frameRate/29.97) )
+            )
+            {
+               throw new Error("Invalid timecode: " + JSON.stringify(timeCode));
+            }
         }
         else if (typeof timeCode == 'undefined') {
             this.frameCount = 0;
@@ -151,17 +168,26 @@
      * Adds t to timecode, in-place (i.e. the object itself changes)
      * @param {number|string|Date|Timecode} t How much to add
      * @param {boolean} [negative=false] Whether we are adding or subtracting
+     * @param {Number} [rollOverMaxHours] allow rollovers
      * @returns Timecode
      */
-    Timecode.prototype.add = function(t,negative) {
-        if (typeof t == 'number') {
+    Timecode.prototype.add = function(t,negative,rollOverMaxHours) {
+        if (typeof t === 'number') {
             var newFrameCount = this.frameCount + Math.floor(t) * (negative?-1:1);
-            if (newFrameCount<0) throw new Error("Negative timecodes not supported");
+            if (newFrameCount<0 && rollOverMaxHours > 0) {
+               newFrameCount = (Math.floor(this.frameRate*86400)) + newFrameCount;
+               if (((newFrameCount / this.frameRate) / 3600) > rollOverMaxHours) {
+                   throw new Error('Rollover arithmetic exceeds max permitted');
+               }
+            }
+           if (newFrameCount<0) {
+              throw new Error("Negative timecodes not supported");
+           }
             this.frameCount = newFrameCount;
         } 
         else {
             if (!(t instanceof Timecode)) t = new Timecode(t);
-            return this.add(t.frameCount,negative);
+            return this.add(t.frameCount,negative,rollOverMaxHours);
         }
         this.frameCount = this.frameCount % (Math.floor(this.frameRate*86400)); // wraparound 24h
         this._frameCountToTimeCode();
@@ -169,9 +195,9 @@
     };
 
 
-    Timecode.prototype.subtract = function(t) {
-        return this.add(t,true);
-    }
+    Timecode.prototype.subtract = function(t, rollOverMaxHours) {
+        return this.add(t,true,rollOverMaxHours);
+    };
 
     /**
      * Converts timecode to a Date() object
@@ -184,7 +210,11 @@
         midnight.setMinutes(0);
         midnight.setSeconds(0);
         midnight.setMilliseconds(0);
-        return new Date( midnight.valueOf() + ms );
+
+        var d = new Date( midnight.valueOf() + ms );
+        var midnight_tz = midnight.getTimezoneOffset() * 60 * 1000;
+        var timecode_tz = d.getTimezoneOffset() * 60 * 1000;
+        return new Date( midnight.valueOf() + ms + (timecode_tz-midnight_tz));
     };
 
     // Export it for Node or attach to root for in-browser
