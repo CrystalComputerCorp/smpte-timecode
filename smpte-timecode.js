@@ -189,7 +189,7 @@
             this.frameCount = newFrameCount;
         }
         else {
-            if (!(t instanceof Timecode)) t = new Timecode(t);
+            if (!(t instanceof Timecode)) t = new Timecode(t, this.frameRate, this.dropFrame);
             return this.add(t.frameCount,negative,rollOverMaxHours);
         }
         this.frameCount = this.frameCount % (Math.round(this.frameRate*86400)); // wraparound 24h
