@@ -157,6 +157,9 @@ describe('Timecode arithmetic', function(){
        expect(function() { new Timecode().subtract(new Timecode('22:30:00;00'), 1); }).to.throwError();
        expect(new Timecode('01:00:00;00').subtract(new Timecode('23:30:00;00'), 2).toString()).to.be('01:30:00;00');
     });
+    it('Ensures source frame rate is kept when adding two Timecode objects', function() {
+        expect(new Timecode('00:00:00:00', 25, false).add('00:01:00:00').frameCount).to.be(1500);
+    });
 });
 
 describe('Date() operations', function(){
