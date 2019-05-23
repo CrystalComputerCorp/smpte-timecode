@@ -99,6 +99,9 @@ in a browser.
 
 ## Update History
 
+- 1.2.3
+  - Fix for adding a string-based timecode to already initialized timecode with original framerate (@tommilburn)
+  - A couple of other date conversion issues (@nkurdybakha & @74ls04)
 - 1.2.1
   - Added support for 23.976 fps framerate (@funkelodeon)
 - 1.2.0
