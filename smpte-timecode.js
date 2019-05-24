@@ -53,7 +53,7 @@
             this.frameCount = Math.round(((timeCode-midnight + (midnight_tz - timecode_tz))*this.frameRate)/1000);
             this._frameCountToTimeCode();
         }
-        else if (typeof timeCode === 'object' && timeCode.hours >= 0) {
+        else if (typeof timeCode === 'object' && typeof (timeCode.hours) != 'undefined') {
             this.hours = timeCode.hours;
             this.minutes = timeCode.minutes;
             this.seconds = timeCode.seconds;

@@ -50,6 +50,11 @@ describe('Constructor tests', function(){
 
     });
 
+    it ('initializing from an object',function(){
+        var t = new Timecode( {hours:12, minutes:34, seconds:56, frames:2 } );
+        expect(t.toString()).to.be.a('12:34:56;02');
+    });
+
     it ('initialization defaults', function() {
         var t = Timecode();
         expect(t.frameCount).to.be(0);
