@@ -1,6 +1,8 @@
 // This should work both in node and in the browsers, so that's what this wrapper is about
 ;(function(root, undefined) {
-
+    // An arbitrary "close enough" number to check if the frame rate is 29.97 or
+    // 59.94
+    var DROP_FRAME_EPSILON = 0.0001;
 
     /**
      * Timecode object constructor
@@ -25,7 +27,8 @@
 
         // If we are passed dropFrame, we need to use it
         if (typeof dropFrame === 'boolean') this.dropFrame = dropFrame;
-        else this.dropFrame = (this.frameRate===29.97 || this.frameRate===59.94); // by default, assume DF for 29.97 and 59.94, NDF otherwise
+        // Otherwise, default to DF for 29.97 and 59.94
+        else this.dropFrame = this._is30DF() || this._is60DF();
 
         // Now either get the frame count, string or datetime        
         if (typeof timeCode === 'number') {
@@ -80,13 +83,13 @@
     Timecode.prototype._validate = function (timeCode) {
 
         // Make sure dropFrame is only for 29.97 & 59.94
-        if (this.dropFrame && this.frameRate!==29.97 && this.frameRate!==59.94) {
+        if (this.dropFrame && !this._is30DF() && !this._is60DF()) {
             throw new Error('Drop frame is only supported for 29.97 and 59.94 fps');
         }
 
         // make sure the numbers make sense
         if (this.hours > 23 || this.minutes > 59 || this.seconds > 59 || this.frames >= this.frameRate ||
-            (this.dropFrame && this.seconds === 0 && this.minutes % 10 && this.frames < 2 * (this.frameRate / 29.97))) {
+            (this.dropFrame && this.seconds === 0 && this.minutes % 10 && this.frames < this._numOfFramesToDrop())) {
             throw new Error("Invalid timecode" + JSON.stringify(timeCode));
         }
     };
@@ -99,7 +102,7 @@
         var fc = this.frameCount;
         // adjust for dropFrame
         if (this.dropFrame) {
-            var df = this.frameRate===29.97 ? 2 : 4; // 59.94 skips 4 frames
+            var df = this._numOfFramesToDrop(); 
             var d = Math.floor(this.frameCount / (17982*df/2));
             var m = this.frameCount % (17982*df/2);
             if (m<df) m=m+df;
@@ -121,9 +124,36 @@
         // adjust for dropFrame
         if (this.dropFrame) {
             var totalMinutes = this.hours*60 + this.minutes;
-            var df = this.frameRate === 29.97 ? 2 : 4;
+            var df = this._numOfFramesToDrop();
             this.frameCount -= df * (totalMinutes - Math.floor(totalMinutes/10));    
         }
+    };
+
+    /**
+     * Is the frame rate 29.97 (30000/1001) or close enough to it
+     * @private
+     */
+    Timecode.prototype._is30DF = function () {
+        return Math.abs(30000/1001 - this.frameRate) < DROP_FRAME_EPSILON;
+    };
+
+    /**
+    * Is the frame rate 59.94 (60000/1001) or close enough to it
+    * @private
+    */
+    Timecode.prototype._is60DF = function () {
+        return Math.abs(60000/1001 - this.frameRate) < DROP_FRAME_EPSILON;
+    };
+
+    /**
+     * Get the number of frames to drop — 29.97 skips 2 frames, 59.94 skips 4
+     * frames.
+     * @private
+     */
+    Timecode.prototype._numOfFramesToDrop = function () {
+        if (this._is30DF()) return 2;
+        else if (this._is60DF()) return 4;
+        else return 0;
     };
 
     /**
