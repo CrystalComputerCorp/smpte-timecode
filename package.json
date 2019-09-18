@@ -20,6 +20,11 @@
     "video",
     "time"
   ],
+  "engines": {
+    "node": "12.10.0",
+    "npm": "6.10.3",
+    "yarn": "1.17.3"
+  },
   "author": "Dimitri Tarassenko",
   "license": "MIT",
   "bugs": {
@@ -27,11 +32,11 @@
   },
   "homepage": "https://github.com/OwnZones/smpte-timecode#readme",
   "devDependencies": {
-    "codecov": "^2.1.0",
-    "coveralls": "^2.12.0",
-    "expect.js": "^0.3.1",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "publish": "^0.6.0"
+    "codecov": "3.5.0",
+    "coveralls": "3.0.6",
+    "expect.js": "0.3.1",
+    "istanbul": "0.4.5",
+    "mocha": "6.2.0",
+    "publish": "0.6.0"
   }
 }
