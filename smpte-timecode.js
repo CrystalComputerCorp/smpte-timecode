@@ -80,8 +80,8 @@
     Timecode.prototype._validate = function (timeCode) {
 
         // Make sure dropFrame is only for 29.97 & 59.94
-        if (this.dropFrame && this.frameRate!==29.97 && this.frameRate!==59.94) {
-            throw new Error('Drop frame is only supported for 29.97 and 59.94 fps');
+        if (this.dropFrame && this.frameRate!==23.976 && this.frameRate!==29.97 && this.frameRate!==59.94) {
+            throw new Error('Drop frame is only supported for 23.976, 29.97, and 59.94 fps');
         }
 
         // make sure the numbers make sense
