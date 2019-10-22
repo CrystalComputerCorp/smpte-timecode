@@ -1,6 +1,6 @@
 {
   "name": "@ownzones/smpte-timecode",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {
