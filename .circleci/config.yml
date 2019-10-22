@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # the image running the build
+      - image: 497387467775.dkr.ecr.us-east-1.amazonaws.com/oz-base-test:0.9.5
+    steps:
+      - checkout
+
+      # set up authentication to access private yarn repo
+      - run:
+          name: Add NPM Token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
+
+      # restore yarn cache
+      - restore_cache:
+          keys:
+            - yarn-cache-{{ .Branch }}-{{ checksum "package.json" }}
+
+      - run:
+          name: Install dependencies
+          command: yarn install
+
+      # save yarn cache to speed up future builds
+      - save_cache:
+          key: yarn-cache-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      # run test
+      - run:
+          command: yarn run test
+
+      # deploy if we're in master
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              yarn publish
+            fi

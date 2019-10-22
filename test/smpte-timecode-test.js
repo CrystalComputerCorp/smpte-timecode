@@ -20,7 +20,6 @@ describe('Constructor tests', function(){
 
     it ('incorrect initializers throw', function() {
         expect(function(){Timecode(1,-1)}).to.throwException();
-        expect(function(){Timecode(1,66)}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
         expect(function(){Timecode({w:3});}).to.throwException();
@@ -78,21 +77,21 @@ describe('Constructor tests', function(){
         expect(function(){Timecode('00:02:00;04',59.94)}).to.not.throwError();
         expect(Timecode('00:01:59;29').frameCount).to.be(3597);
         expect(Timecode('00:01:59;59',59.94).frameCount).to.be(3597*2+1);
-        expect(Timecode(17982,29.97,true).toString()).to.be('00:10:00;00'); 
-        expect(Timecode(1078920,29.97,true).toString()).to.be('10:00:00;00'); 
-        expect(Timecode(3597,29.97,true).toString()).to.be('00:01:59;29'); 
-        expect(Timecode(17982*2,59.94,true).toString()).to.be('00:10:00;00'); 
-        expect(Timecode(1078920*2,59.94,true).toString()).to.be('10:00:00;00'); 
-        expect(Timecode(3597*2+1,59.94,true).toString()).to.be('00:01:59;59'); 
+        expect(Timecode(17982,29.97,true).toString()).to.be('00:10:00;00');
+        expect(Timecode(1078920,29.97,true).toString()).to.be('10:00:00;00');
+        expect(Timecode(3597,29.97,true).toString()).to.be('00:01:59;29');
+        expect(Timecode(17982*2,59.94,true).toString()).to.be('00:10:00;00');
+        expect(Timecode(1078920*2,59.94,true).toString()).to.be('10:00:00;00');
+        expect(Timecode(3597*2+1,59.94,true).toString()).to.be('00:01:59;59');
     });
     it ('non-drop-frame counts', function() {
         expect(Timecode('00:10:00:00',25).frameCount).to.be(15000);
         expect(Timecode('10:00:00:00',25).frameCount).to.be(900000);
         expect(Timecode('00:02:00:00',25).frameCount).to.be(3000);
         expect(Timecode('00:01:59:24',25).frameCount).to.be(2999);
-        expect(Timecode(15000,25).toString()).to.be('00:10:00:00'); 
-        expect(Timecode(900000,25).toString()).to.be('10:00:00:00'); 
-        expect(Timecode(2999,25).toString()).to.be('00:01:59:24'); 
+        expect(Timecode(15000,25).toString()).to.be('00:10:00:00');
+        expect(Timecode(900000,25).toString()).to.be('10:00:00:00');
+        expect(Timecode(2999,25).toString()).to.be('00:01:59:24');
     });
 });
 
@@ -127,7 +126,7 @@ describe('Timecode arithmetic', function(){
         expect(-t).to.be(-150606);
         expect(Math.round(t)).to.be(150606);
         t++;
-        expect(t).to.be(150607); 
+        expect(t).to.be(150607);
         expect(t).to.be.a('number'); // t is not a timecode anymore!
     });
     it ('Timecode().add() and .subtract()', function() {
