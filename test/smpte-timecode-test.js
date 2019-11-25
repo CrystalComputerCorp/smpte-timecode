@@ -1,4 +1,5 @@
 var sinon = require('sinon');
+const isEqual = require('lodash.isequal');
 
 // If we are running under Node, we need to add expect and load our module
 if (typeof module !== 'undefined' && module.exports) {
@@ -91,6 +92,7 @@ describe('Constructor tests', function(){
         expect(Timecode(1078920*2,59.94,true).toString()).to.be('10:00:00;00'); 
         expect(Timecode(3597*2+1,59.94,true).toString()).to.be('00:01:59;59'); 
     });
+
     it ('non-drop-frame counts', function() {
         expect(Timecode('00:10:00:00',25).frameCount).to.be(15000);
         expect(Timecode('10:00:00:00',25).frameCount).to.be(900000);
@@ -100,6 +102,26 @@ describe('Constructor tests', function(){
         expect(Timecode(900000,25).toString()).to.be('10:00:00:00'); 
         expect(Timecode(2999,25).toString()).to.be('00:01:59:24'); 
     });
+
+    it("preserves drop frame and frame rate from 'other' timecode", function() {
+       const tc = new Timecode('05:27:00;57', 59.94, true);
+       let constructed;
+       expect(() => { constructed = Timecode(tc); }).not.to.throwException();
+       expect(isEqual(constructed, tc)).to.be(true);
+    });
+
+   it("allows override of drop frame and frame rate from 'other' timecode", function() {
+      {
+         const tc = new Timecode('05:27:00;57', 59.94, true);
+         expect(() => { Timecode(tc, 29.97); }).to.throwException();
+      }
+      {
+         const tc = new Timecode('05:27:00;27', 59.94, true);
+         let constructed;
+         expect(() => { constructed = Timecode(tc, 29.97); }).not.to.throwException();
+         expect(isEqual(constructed, new Timecode('05:27:00;27', 29.97, true))).to.be(true);
+      }
+   });
 });
 
 describe('String conversions', function(){

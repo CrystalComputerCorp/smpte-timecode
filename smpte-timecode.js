@@ -54,6 +54,8 @@
             this._frameCountToTimeCode();
         }
         else if (typeof timeCode === 'object' && typeof (timeCode.hours) != 'undefined') {
+            if (!frameRate && timeCode.frameRate) this.frameRate = timeCode.frameRate;
+            if (typeof dropFrame !== 'boolean' && typeof timeCode.dropFrame === 'boolean') this.dropFrame = timeCode.dropFrame;
             this.hours = timeCode.hours;
             this.minutes = timeCode.minutes;
             this.seconds = timeCode.seconds;
@@ -140,10 +142,10 @@
                 else {
                     frames = Math.floor(frames/2);
                     field = '.'.concat((this.frameCount%2).toString());
-                };
+                }
             }
             else throw new Error('Unsupported string format');
-        };
+        }
         return "".concat(
             this.hours<10 ? '0' : '',
             this.hours.toString(),
