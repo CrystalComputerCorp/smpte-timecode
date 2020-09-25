@@ -167,8 +167,8 @@
      * @returns {string} timecode
      */
     Timecode.prototype.toJSON = function SerializeTimeCode() {
-        return this.toString()
-    }
+        return this.toString();
+    };
 
     /**
      * @returns {Number} the frame count when Timecode() object is used as a number
