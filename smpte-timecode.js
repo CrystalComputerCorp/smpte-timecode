@@ -133,7 +133,7 @@
      * @param {String} format output format
      * @returns {string} timecode
      */
-    Timecode.prototype.toString = Timecode.prototype.toJSON = function TimeCodeToString(format) {
+    Timecode.prototype.toString = function TimeCodeToString(format) {
         var frames = this.frames;
         var field = '';
         if (typeof format === 'string') {
@@ -161,6 +161,14 @@
             field
         );
     };
+    
+    /**
+     * Serializes a Timecode when stringifying a JSON object
+     * @returns {string} timecode
+     */
+    Timecode.prototype.toJSON = function SerializeTimeCode() {
+        return this.toString()
+    }
 
     /**
      * @returns {Number} the frame count when Timecode() object is used as a number
