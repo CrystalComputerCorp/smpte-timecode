@@ -1,5 +1,5 @@
 language: node_js
 node_js:
   - "7"
-script: "npm run-script test-travis && codecov --file=coverage/lcov.info --disable=gcov"
+script: "yarn run test-travis && codecov --file=coverage/lcov.info --disable=gcov"
 after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

@@ -88,11 +88,11 @@ For more usage examples, see the unit tests.
 ## Running Tests
 To run tests, make sure you install `expect.js`, `mocha`, `codecov` and `istanbul` NPMs **locally**.
 
-    npm install expect.js mocha istanbul codecov
+    yarn add expect.js mocha istanbul codecov
 
 The tests can be run in Node using:
 
-    npm test
+    yarn test
 
 To run the tests in a browser environment, open the `test/smpte-timecode-test.html` file
 in a browser.

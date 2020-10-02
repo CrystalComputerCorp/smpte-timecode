@@ -1,0 +1,21 @@
+---------------ERROR!!! PLEASE READ---------------
+
+This project uses yarn instead of npm!
+
+There are many articles out there that list out the benefits of using yarn over npm. Eg: [article](https://www.sitepoint.com/yarn-vs-npm/) 
+
+
+To install dependencies:
+$ yarn install --frozen-lockfile
+
+To install a new package (also adds to package.json):
+$ yarn add [packagename]
+
+To upgrade a package:
+$ yarn upgrade [packagename]
+
+For more help, see these links:
+    - https://yarnpkg.com/en/docs/usage
+    - https://classic.yarnpkg.com/en/docs/cli/install
+
+---------------END OF MESSAGE---------------
