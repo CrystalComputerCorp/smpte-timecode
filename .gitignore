@@ -40,3 +40,4 @@ jspm_packages
 
 .idea
 .circleci
+.nyc_output
