@@ -35,11 +35,10 @@ Timecode = function (timecode, frameRate, dropFrame) {...};
 clock would have with a given framerate. Month, date and
 year discarded.
 
-- `frameRate`: number or Array, optional  
-if a non-integer number is passed that is near 24, 30 or 60, (i.e. 23.97 or 29.97 for example) the 
-fractional 24000/1001, 30000/1001 or 60000/1001 rates will be assumed. If an array is passed, the
-framerate is assumed to be a natural fraction, with first element the numerator and second the denominator (for example, [60000,10001]).
-The framerate of 30000/1001 (29.97) is assumed if the parameter is omitted.
+- `frameRate`: number (frames per second) or Array ([numerator,denominator]), optional  
+  - if a non-integer number is passed that is near 24, 30 or 60, (i.e. 23.97 or 29.97 for example) the fractional 24000/1001, 30000/1001 or 60000/1001 rates will be assumed. 
+  - If an array is passed, the framerate is assumed to be a natural fraction, with first element the numerator and second the denominator (for example, [60000,10001]).
+  - 30000/1001 (29.97) is assumed if the parameter is omitted.
 
 - `dropFrame`: boolean, optional  
 whether the timecode is using drop-frame or non-drop-frame mode.
@@ -88,13 +87,13 @@ The `Timecode` object also provides the following member functions:
 For more usage examples, see the unit tests.
 
 ## Running Tests
-To run tests, make sure you install `expect.js`, `mocha`, and `nyc` NPMs **locally**.
+To run tests, make sure you run
 
-    npm install expect.js mocha nyc
+    npm ci
 
 The tests can be run in Node using:
 
-    npm test
+    npx mocha
     npm run coverage
 
 To run the tests in a browser environment, open the `test/smpte-timecode-test.html` file
