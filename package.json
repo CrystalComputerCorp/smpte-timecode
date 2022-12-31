@@ -5,7 +5,7 @@
   "main": "smpte-timecode.js",
   "scripts": {
     "test": "mocha",
-    "coverage": "nyc npm run test",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
