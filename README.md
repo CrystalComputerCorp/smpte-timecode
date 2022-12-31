@@ -1,5 +1,4 @@
 # smpte-timecode
-[![Travis](https://img.shields.io/travis/CrystalComputerCorp/smpte-timecode.svg)](https://travis-ci.org/CrystalComputerCorp/smpte-timecode) [![Codecov](https://img.shields.io/codecov/c/github/CrystalComputerCorp/smpte-timecode.svg)](https://codecov.io/gh/CrystalComputerCorp/smpte-timecode) [![Coveralls](https://img.shields.io/coveralls/CrystalComputerCorp/smpte-timecode.svg)](https://coveralls.io/github/CrystalComputerCorp/smpte-timecode?branch=master)   
 [![npm](https://img.shields.io/npm/v/smpte-timecode.svg)](http://www.npmjs.com/package/smpte-timecode) [![npm](https://img.shields.io/npm/dt/smpte-timecode.svg)](https://www.npmjs.com/package/smpte-timecode) [![npm](https://img.shields.io/npm/l/smpte-timecode.svg)]()
 
 `smpte-timecode` is a JavaScript library for operations with [SMPTE timecodes](https://en.wikipedia.org/wiki/SMPTE_timecode).
@@ -36,9 +35,11 @@ Timecode = function (timecode, frameRate, dropFrame) {...};
 clock would have with a given framerate. Month, date and
 year discarded.
 
-- `frameRate`: number, optional  
-one of 23.976, 24, 25, 29.97, 30, 50, 59.94, or 60 is expected. 
-29.97 is assumed if the parameter is omitted.
+- `frameRate`: number or array, optional 
+if a non-integer number is passed that is near 24, 30 or 60, (i.e. 23.97 or 29.97 for example) the 
+fractional 24000/1001, 30000/1001 or 60000/1001 rates will be assumed. If an array is passed, the
+framerate is assumed to be a natural fraction, with first element the numerator and second the denominator (for example, [60000,10001]).
+The framerate of 30000/1001 (29.97) is assumed if the parameter is omitted.
 
 - `dropFrame`: boolean, optional  
 whether the timecode is using drop-frame or non-drop-frame mode.
@@ -50,6 +51,7 @@ Examples:
 ```javascript
 var minute = new Timecode('00:01:00:00');
 var eightHundredFrames = new Timecode(800,29.97,true);
+var nineHundredFrames = new (Timecode(900,[60000,1001]),true);
 var wallClock = new Timecode(new Date());
 ```
 
@@ -98,7 +100,9 @@ To run the tests in a browser environment, open the `test/smpte-timecode-test.ht
 in a browser.
 
 ## Update History
-
+- 1.3
+  - Coverage tests changed to nyc
+  - Support for fractional framerates and framerates above 60fps
 - 1.2.3
   - Fix for adding a string-based timecode to already initialized timecode with original framerate (@tommilburn)
   - A couple of other date conversion issues (@nkurdybakha & @74ls04)
@@ -117,6 +121,7 @@ been breaking changes for anyone who used it.
 - [http://andrewduncan.net/timecodes/](http://andrewduncan.net/timecodes/) by Andrew Duncan
 
 ## Legal
-License: MIT  
-Copyright &copy; 2017 Crystal Computer Corp.   
-[http://www.crystalcc.com](http://www.crystalcc.com)
+License: MIT
+
+Copyright &copy; 2023 LTN Global Communications, Inc. [http://www.ltnglobal.com](http://www.ltnglobal.com)<br/>
+Copyright &copy; 2017 Crystal Computer Corp. [http://www.crystalcc.com](http://www.crystalcc.com)
