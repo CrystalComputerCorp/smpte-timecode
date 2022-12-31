@@ -22,7 +22,7 @@ describe('Constructor tests', function(){
 
     it ('incorrect initializers throw', function() {
         expect(function(){Timecode(1,-1)}).to.throwException();
-        expect(function(){Timecode(1,66)}).to.throwException();
+        expect(function(){Timecode(1,66.1)}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
         expect(function(){Timecode('dewdew');}).to.throwException();
         expect(function(){Timecode({w:3});}).to.throwException();
@@ -35,6 +35,8 @@ describe('Constructor tests', function(){
         expect(t.seconds).to.be(44);
         expect(t.frames).to.be(12);
         expect(t.dropFrame).to.be(true);
+        expect(t.frameRateNum).to.be(30000);
+        expect(t.frameRateDen).to.be(1001);
         expect(t.frameRate).to.be(29.97);
         t = new Timecode('12:33:44:12');
         expect(t.hours).to.be(12);
@@ -42,6 +44,8 @@ describe('Constructor tests', function(){
         expect(t.seconds).to.be(44);
         expect(t.frames).to.be(12);
         expect(t.dropFrame).to.be(false);
+        expect(t.frameRateNum).to.be(30000);
+        expect(t.frameRateDen).to.be(1001);
         expect(t.frameRate).to.be(29.97);
 
         expect(function(){Timecode('40:02:00;02')}).to.throwError();
@@ -54,6 +58,7 @@ describe('Constructor tests', function(){
     it ('initializing from an object',function(){
         var t = new Timecode( {hours:12, minutes:34, seconds:56, frames:2 } );
         expect(t.toString()).to.be('12:34:56;02');
+        expect(function(){Timecode(0,{})}).to.throwException();
     });
 
     it ('initialization defaults', function() {
@@ -66,6 +71,13 @@ describe('Constructor tests', function(){
         expect(Timecode(1,29.97).dropFrame).to.be(true);
         expect(Timecode(1,59.94).dropFrame).to.be(true);
         expect(Timecode(1,25).dropFrame).to.be(false);
+    });
+
+    it ('natural fraction timecodes', function() {
+        var t = Timecode('00:02:10;34',[60000,1001]);
+        expect(t.frameRate).to.be(59.94);
+        var t2 = Timecode('00:02:10;14',[25000,1001]);
+        expect(t2.frameRate).to.be(24.98);
     });
 
     it ('drop-frame only for 29.97 and 59.94', function() {
@@ -204,7 +216,7 @@ describe('Date() operations', function(){
         expect( d.getHours()).to.be(1);
         expect( d.getMinutes()).to.be(23);
         expect( d.getSeconds()).to.be(45);
-        expect( d.getMilliseconds()).to.be(358);
+        expect( d.getMilliseconds()).to.be(353);
     });
 });
 
