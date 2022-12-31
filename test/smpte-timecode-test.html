@@ -1,23 +1,30 @@
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Mocha Tests</title>
-  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
-</head>
-<body>
-  <div id="mocha"></div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mocha Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
 
-  <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
-  <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
-  <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script>
-
-  <script>mocha.setup('bdd')</script>
-  <script src="../smpte-timecode.js"></script>
-  <script src="smpte-timecode-test.js"></script>
-  <script>
-    mocha.checkLeaks();
-    mocha.globals(['jQuery']);
-    mocha.run();
-  </script>
-</body>
+    <script class="mocha-init">
+      mocha.setup('bdd');
+      mocha.checkLeaks();
+      mocha.globals(['jQuery']);
+    </script>
+    <script src="../node_modules/expect.js/index.js"></script>
+    <script src="../node_modules/lodash/lodash.js"></script> 
+    <script class="mocha-init">
+      var isEqual = _.isEqual;
+    </script>
+    <script src="../smpte-timecode.js"></script>
+    <script src="smpte-timecode-test.js"></script>
+    <script class="mocha-exec">
+      mocha.run();
+    </script>
+  </body>
 </html>

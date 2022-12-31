@@ -93,13 +93,15 @@ To run tests, make sure you run
 
 The tests can be run in Node using:
 
-    npx mocha
+    npm test
     npm run coverage
 
 To run the tests in a browser environment, open the `test/smpte-timecode-test.html` file
 in a browser.
 
 ## Update History
+- 1.3.2
+  - fixed to browser-based tests, documentation.
 - 1.3.1
   - Coverage tests changed to nyc
   - Support for fractional framerates and framerates above 60fps

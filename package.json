@@ -1,6 +1,6 @@
 {
   "name": "smpte-timecode",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "JavaScript implementation of SMPTE timecode type",
   "main": "smpte-timecode.js",
   "scripts": {

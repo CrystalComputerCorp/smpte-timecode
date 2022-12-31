@@ -1,10 +1,14 @@
-var sinon = require('sinon');
-const isEqual = require('lodash.isequal');
 
 // If we are running under Node, we need to add expect and load our module
 if (typeof module !== 'undefined' && module.exports) {
     global.expect = require('expect.js');
+    global.isEqual = require('lodash.isequal');
     global.Timecode = require('../smpte-timecode.js');
+    global.sinon = require('sinon');
+    var runInBrowser = false;
+}
+else {
+    var runInBrowser = true;
 }
 
 describe('Constructor tests', function(){
@@ -221,50 +225,54 @@ describe('Date() operations', function(){
 });
 
 describe('DST handling', function() {
-   var clock;
+    var clock;
 
-   function clearDate(d) {
-      d.setYear(0);
-      d.setMonth(0);
-      d.setDate(1);
-   }
-
-   function checkDst(d) {
-      // we need to fake out 'new Date()', since this issue only happens day of.
-      clock = sinon.useFakeTimers(d);
-
-      var t = new Timecode(d, 29.97, true);
-      var o = t.toDate();
-      // console.log(d.toString(), '->', o.toString());
-      clearDate(d);
-      clearDate(o);
-      expect(o.toString()).to.be(d.toString());
-   }
-
-   afterEach(function() {
-      clock.restore();
-   });
-
-   it ('handles DST start 1am', function() {
-      checkDst(new Date(2018,2,11,1,0,0,200));
-      checkDst(new Date(2018,2,11,1,59,59,200));
-   });
-
-   it ('handles DST start 2am', function() {
-      checkDst(new Date(2018,2,11,2,0,0,200));
-      checkDst(new Date(2018,2,11,2,59,59,200));
-      checkDst(new Date(2018,2,11,3,0,0,200));
-   });
-
-   it ('handles DST end 1am', function() {
-      checkDst(new Date(2018,10,4,1,0,0,200));
-      checkDst(new Date(2018,10,4,1,59,59,200));
-   });
-
-   it ('handles DST end 2am', function() {
-      checkDst(new Date(2018,10,4,2,0,0,200));
-      checkDst(new Date(2018,10,4,2,59,59,200));
-      checkDst(new Date(2018,10,4,3,0,0,200));
-   });
+    function clearDate(d) {
+        d.setYear(0);
+        d.setMonth(0);
+        d.setDate(1);
+    }
+ 
+    function checkDst(d) {
+        // we need to fake out 'new Date()', since this issue only happens day of.
+        clock = sinon.useFakeTimers(d);
+  
+        var t = new Timecode(d, 29.97, true);
+        var o = t.toDate();
+        // console.log(d.toString(), '->', o.toString());
+        clearDate(d);
+        clearDate(o);
+        expect(o.toString()).to.be(d.toString());
+    }
+ 
+    afterEach(function() {
+        if (!runInBrowser) clock.restore();
+    });
+ 
+    it ('handles DST start 1am', function() {
+        if (runInBrowser) this.skip();
+        checkDst(new Date(2018,2,11,1,0,0,200));
+        checkDst(new Date(2018,2,11,1,59,59,200));
+    });
+ 
+    it ('handles DST start 2am', function() {
+        if (runInBrowser) this.skip();
+        checkDst(new Date(2018,2,11,2,0,0,200));
+        checkDst(new Date(2018,2,11,2,59,59,200));
+        checkDst(new Date(2018,2,11,3,0,0,200));
+    });
+ 
+    it ('handles DST end 1am', function() {
+        if (runInBrowser) this.skip();
+        checkDst(new Date(2018,10,4,1,0,0,200));
+        checkDst(new Date(2018,10,4,1,59,59,200));
+    });
+ 
+    it ('handles DST end 2am', function() {
+        if (runInBrowser) this.skip();
+        checkDst(new Date(2018,10,4,2,0,0,200));
+        checkDst(new Date(2018,10,4,2,59,59,200));
+        checkDst(new Date(2018,10,4,3,0,0,200));
+    });
 
 });
