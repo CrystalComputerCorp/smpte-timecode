@@ -276,3 +276,12 @@ describe('DST handling', function() {
     });
 
 });
+
+describe('Issues', function() {
+    it ('#36 23.976 Time Code', function(){
+        var t = new Timecode("10:00:00;06", 23.976, false); 
+        expect(t.dropFrame).to.be(false);
+        var t1 = new Timecode("10:00:00;06", 23.976); 
+        expect(t1.dropFrame).to.be(false);
+    });
+});

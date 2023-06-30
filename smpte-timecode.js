@@ -46,7 +46,7 @@
                         // we got a fractional, we'll assume it's a 29.97, 23.98, 59.94 or something of the sort
                         this.frameRateNum = frameRateRound*1000;
                         this.frameRateDen = 1001;
-                        this.dropFrame = true;
+                        if (frameRateRound != 24) this.dropFrame = true;
                     }
                 }
                 break;
@@ -69,7 +69,7 @@
             this.seconds = parseInt(parts[3]);
             // do not override input parameters
             if (typeof dropFrame !== 'boolean') {
-                this.dropFrame = parts[4]!==':';
+                this.dropFrame = ( parts[4]!==':' && this.frameRate>25 );
             }
             this.frames = parseInt(parts[5]);
             this._timeCodeToFrameCount();
