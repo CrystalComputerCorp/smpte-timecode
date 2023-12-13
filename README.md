@@ -100,6 +100,8 @@ To run the tests in a browser environment, open the `test/smpte-timecode-test.ht
 in a browser.
 
 ## Update History
+- 1.3.4
+  - fix for #37 - support for framerates above 100
 - 1.3.3
   - fix for #36 - 23.976 is never a drop frame timecode.
 - 1.3.2
