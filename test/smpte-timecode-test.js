@@ -284,4 +284,12 @@ describe('Issues', function() {
         var t1 = new Timecode("10:00:00;06", 23.976); 
         expect(t1.dropFrame).to.be(false);
     });
+
+
+    it ('#37 Time Codes >100', function(){
+        var t = new Timecode("00:00:10;112", 200, false); 
+        expect(t.dropFrame).to.be(false);
+        expect(t.frameCount).to.be(2112);
+        expect(Timecode('12:34:56:578',600).toString()).to.be('12:34:56:578');
+    });
 });

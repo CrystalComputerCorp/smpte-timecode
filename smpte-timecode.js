@@ -62,7 +62,7 @@
         }
         else if (typeof timeCode === 'string') {
             // pick it apart
-            var parts = timeCode.match('^([012]\\d):(\\d\\d):(\\d\\d)(:|;|\\.)(\\d\\d)$');
+            var parts = timeCode.match('^([012]\\d):(\\d\\d):(\\d\\d)(:|;|\\.)(\\d+)$');
             if (!parts) throw new Error("Timecode string expected as HH:MM:SS:FF or HH:MM:SS;FF");
             this.hours = parseInt(parts[1]);
             this.minutes = parseInt(parts[2]);
@@ -180,17 +180,13 @@
             else throw new Error('Unsupported string format');
         }
         return "".concat(
-            this.hours<10 ? '0' : '',
-            this.hours.toString(),
+            String(this.hours).padStart(2,'0'),
             ':',
-            this.minutes<10 ? '0' : '',
-            this.minutes.toString(),
+            String(this.minutes).padStart(2,'0'),
             ':',
-            this.seconds<10 ? '0' : '',
-            this.seconds.toString(),
+            String(this.seconds).padStart(2,'0'),
             this.dropFrame ? ';' : ':',
-            frames<10 ? '0' : '',
-            frames.toString(),
+            String(frames).padStart(String(Math.round(this.frameRate)).length,'0'),
             field
         );
     };
