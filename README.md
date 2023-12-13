@@ -37,7 +37,7 @@ year discarded.
 
 - `frameRate`: number (frames per second) or Array ([numerator,denominator]), optional  
   - if a non-integer number is passed that is near 24, 30 or 60, (i.e. 23.97 or 29.97 for example) the fractional 24000/1001, 30000/1001 or 60000/1001 rates will be assumed. 
-  - If an array is passed, the framerate is assumed to be a natural fraction, with first element the numerator and second the denominator (for example, [60000,10001]).
+  - If an array is passed, the framerate is assumed to be a natural fraction, with first element the numerator and second the denominator (for example, [60000,1001]).
   - 30000/1001 (29.97) is assumed if the parameter is omitted.
 
 - `dropFrame`: boolean, optional  
