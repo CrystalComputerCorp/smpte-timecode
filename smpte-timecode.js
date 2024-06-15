@@ -46,7 +46,7 @@
                         // we got a fractional, we'll assume it's a 29.97, 23.98, 59.94 or something of the sort
                         this.frameRateNum = frameRateRound*1000;
                         this.frameRateDen = 1001;
-                        if (frameRateRound != 24) this.dropFrame = true;
+                        if (frameRateRound != 24 && typeof(dropFrame) !== 'boolean') this.dropFrame = true;
                     }
                 }
                 break;

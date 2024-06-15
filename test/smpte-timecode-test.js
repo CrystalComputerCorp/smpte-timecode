@@ -292,4 +292,10 @@ describe('Issues', function() {
         expect(t.frameCount).to.be(2112);
         expect(Timecode('12:34:56:578',600).toString()).to.be('12:34:56:578');
     });
+
+    it ('#42 59.94 NDF Time Codes', function(){
+        var t = new Timecode(123456, 59.95, false); 
+        expect(t.dropFrame).to.be(false);
+    });
+
 });

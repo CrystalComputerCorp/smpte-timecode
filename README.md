@@ -100,6 +100,8 @@ To run the tests in a browser environment, open the `test/smpte-timecode-test.ht
 in a browser.
 
 ## Update History
+- 1.3.6
+  - fix for #42 - 59.94 and 29.97 non-drop-frame timecodes would not initialize properly
 - 1.3.5
   - packaging fix
 - 1.3.4
