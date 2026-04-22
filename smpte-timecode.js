@@ -75,11 +75,19 @@
             this._timeCodeToFrameCount();
         }
         else if (typeof timeCode === 'object' && timeCode instanceof Date) {
-            var midnight = new Date(timeCode.getFullYear(), timeCode.getMonth(), timeCode.getDate(),0,0,0);
-            var midnight_tz = midnight.getTimezoneOffset() * 60 * 1000;
-            var timecode_tz = timeCode.getTimezoneOffset() * 60 * 1000;
-            this.frameCount = Math.round(((timeCode-midnight + (midnight_tz - timecode_tz))*this.frameRate)/1000);
-            this._frameCountToTimeCode();
+            this.hours = timeCode.getHours()
+            this.minutes = timeCode.getMinutes()
+            this.seconds = timeCode.getSeconds()
+            this.frames = Math.floor(timeCode.getMilliseconds() * Math.round(this.frameRate) / 1000)
+            if (this.dropFrame && this.minutes % 10 > 0 && this.seconds === 0) {
+                if (this.frameRate < 30 && this.frames < 2) {
+                    this.frames = 2;
+                }
+                else if (this.frameRate < 60  && this.frames < 4) {
+                    this.frames = 4;
+                }
+            }
+            this._timeCodeToFrameCount();
         }
         else if (typeof timeCode === 'object' && typeof (timeCode.hours) != 'undefined') {
             if (!frameRate && timeCode.frameRate) {
@@ -239,7 +247,7 @@
      * @returns {Date} date
      */
     Timecode.prototype.toDate = function() {
-        var ms = this.frameCount/(this.frameRateNum/this.frameRateDen)*1000;
+        var ms = 1000*(this.hours*3600 + this.minutes*60 + this.seconds + this.frames/(this.frameRate));
         var midnight = new Date();
         midnight.setHours(0);
         midnight.setMinutes(0);

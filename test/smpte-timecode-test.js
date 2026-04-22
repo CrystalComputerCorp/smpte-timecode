@@ -206,6 +206,9 @@ describe('Timecode arithmetic', function(){
 });
 
 describe('Date() operations', function(){
+    const now = new Date();
+    const tcEpoch = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+
     it ('Date() initializers work', function(){
         var t = new Timecode( new Date(0,0,0,1,2,13,200), 29.97, true );
         expect( t.frameCount ).to.be(111884);
@@ -215,12 +218,127 @@ describe('Date() operations', function(){
         expect( t2.frameCount ).to.be(960388);
         expect( t2.toString()).to.be('10:40:15:13');
     });
+
     it ('Timecode to Date()', function(){
         var d = Timecode('01:23:45;10').toDate();
         expect( d.getHours()).to.be(1);
         expect( d.getMinutes()).to.be(23);
         expect( d.getSeconds()).to.be(45);
-        expect( d.getMilliseconds()).to.be(353);
+        expect( d.getMilliseconds()).to.be(333);
+
+        d = Timecode('01:23:45;10', 59.94, true).toDate();
+        expect( d.getHours()).to.be(1);
+        expect( d.getMinutes()).to.be(23);
+        expect( d.getSeconds()).to.be(45);
+        expect( d.getMilliseconds()).to.be(166);
+    });
+
+    it('does not attribute drop frames to sub-minute times', () => {
+        let origDate;
+        origDate = new Date(tcEpoch.valueOf() + 30000);
+        let t = new Timecode(origDate, 59.94, true);
+        expect(t.toDate().getSeconds()).to.be(30);
+        expect(t.toString()).to.be('00:00:30;00');
+
+        origDate = new Date(tcEpoch.valueOf() + 50*60*1000 + 30000);
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('00:50:30;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(30);
+
+        origDate = new Date(tcEpoch.valueOf() + 23*3600*1000 + 50*60*1000 + 30000);
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('23:50:30;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(30);
+    });
+
+    it('attributes drop frames to the next minute', () => {
+        let origDate, t, d
+
+        origDate = new Date(tcEpoch.valueOf() + 60000);
+        t = new Timecode(origDate, 59.94, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('00:01:00;04');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(1);
+
+        origDate = new Date(tcEpoch.valueOf() + 60000)
+        t = new Timecode(new Date(origDate), 29.97, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('00:01:00;02');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(1);
+
+        origDate = new Date(tcEpoch.valueOf() + 51 * 60000)
+        t = new Timecode(new Date(origDate), 59.94, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('00:51:00;04');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(51);
+
+        origDate = new Date(tcEpoch.valueOf() + 23*3600*1000 + 58 * 60000)
+        t = new Timecode(new Date(origDate), 59.94, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('23:58:00;04');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getHours()).to.be(23);
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(58);
+
+        origDate = new Date(tcEpoch.valueOf() + 60000)
+        t = new Timecode(new Date(origDate), 29.97, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('00:01:00;02');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(1);
+
+        origDate = new Date(tcEpoch.valueOf() + 51 * 60000)
+        t = new Timecode(new Date(origDate), 29.97, true);
+        d = t.toDate();
+        expect(t.toString()).to.be('00:51:00;02');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString().replace('.000Z','.066Z'));
+        expect(d.getSeconds()).to.be(0);
+        expect(d.getMinutes()).to.be(51);
+
+        origDate = new Date(tcEpoch.valueOf() + 10 * 60000)
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('00:10:00;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(0);
+        expect(t.toDate().getMinutes()).to.be(10);
+
+        origDate = new Date(tcEpoch.valueOf() + 30 * 60000)
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('00:30:00;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(0);
+        expect(t.toDate().getMinutes()).to.be(30);
+
+        origDate = new Date(tcEpoch.valueOf() + 50 * 60000)
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('00:50:00;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(0);
+        expect(t.toDate().getMinutes()).to.be(50);
+
+        origDate = new Date(tcEpoch.valueOf() + 50 * 60000 + 23*3600*1000)
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('23:50:00;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(0);
+        expect(t.toDate().getMinutes()).to.be(50);
+
+        origDate = new Date(tcEpoch.valueOf() + 23*3600*1000 + 59*60*1000 + 30000)
+        t = new Timecode(origDate, 59.94, true);
+        expect(t.toString()).to.be('23:59:30;00');
+        expect(t.toDate().toISOString()).to.be(origDate.toISOString());
+        expect(t.toDate().getSeconds()).to.be(30);
+        expect(t.toDate().getMinutes()).to.be(50);
     });
 });
 
